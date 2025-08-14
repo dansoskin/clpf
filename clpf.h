@@ -1,11 +1,12 @@
 #ifndef lpf_h
 #define lpf_h
 
-#ifdef __cplusplus
-extern "C"{
-#endif
+// #ifdef __cplusplus
+// extern "C"{
+// #endif
 
 #include <stdint.h>
+#include <Arduino.h>
 
 #define DBG_LPF
 
@@ -32,8 +33,8 @@ void setup_lpf(lpf_t * lpf, char* name, uint8_t shift_amount, int16_t threshold,
 uint16_t apply_filter(lpf_t * lpf, int16_t new_sample);
 uint8_t compare_to_threshold(lpf_t * lpf);
 
-#ifdef __cplusplus
-}
-#endif
+// #ifdef __cplusplus
+// }
+// #endif
 
 #endif 

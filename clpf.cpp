@@ -1,9 +1,11 @@
-#include <lpf.h>
+#include <clpf.h>
 
 void setup_lpf(lpf_t * lpf, char* name, uint8_t shift_amount, int16_t threshold, uint8_t should_inverse, uint16_t above_th_time)
 {
     memset(lpf->_name, 0, sizeof(lpf->_name));
-    strncpy(lpf->_name, name, sizeof(lpf->_name));
+    // Ensure name is copied and null-terminated
+    strncpy(lpf->_name, name, sizeof(lpf->_name) - 1);
+    lpf->_name[sizeof(lpf->_name) - 1] = '\0';
     
     lpf->_shift_amount = shift_amount;
     lpf->_threshold = threshold;
@@ -48,9 +50,9 @@ uint8_t compare_to_threshold(lpf_t * lpf)
         lpf->last_change_time = millis();
 
         #ifdef DBG_LPF
-            char p[30] = {0};
-            snprintf(p, 30, "%s state=%u\n", lpf->_name, lpf->is_detected);
-            Serial.println(p);
+            char p[40] = {0};
+            snprintf(p, sizeof(p), "%s state=%u\n", lpf->_name, lpf->is_detected);
+            Serial.print(p);
         #endif
     }
     else
