@@ -1,5 +1,18 @@
 #include <clpf.h>
 
+static void lpf_emit_debug_print(lpf_t * lpf, const char * message)
+{
+    lpf->_log_fn(message);
+
+    // if ((lpf != NULL) && (lpf->_log_fn != NULL))
+    // {
+    //     lpf->_log_fn(message);
+    //     return;
+    // }
+
+    // LPF_FALLBACK_LOG(message);
+}
+
 
 
 void setup_lpf(lpf_t * lpf, uint8_t shift_amount)
@@ -17,14 +30,19 @@ void setup_comparator(lpf_t * lpf, int32_t threshold, uint8_t should_inverse, ui
     lpf->_is_comparator_set = 1;
 }
 
-void setup_comparator_prints(lpf_t * lpf, const char* name)
+void setup_comparator_prints(lpf_t * lpf, const char* name, lpf_log_fn_t log_fn)
 {
+    if (lpf == NULL)
+        return;
+
     memset(lpf->_name, 0, sizeof(lpf->_name));
-    // Ensure name is copied and null-terminated
-    strncpy(lpf->_name, name, sizeof(lpf->_name) - 1);
+
+    if (name != NULL)
+        strncpy(lpf->_name, name, sizeof(lpf->_name) - 1);
+
     lpf->_name[sizeof(lpf->_name) - 1] = '\0';
 
-    lpf->_is_debug_print_set = 1;
+    lpf->_log_fn = log_fn;
 }
 
 
@@ -67,16 +85,15 @@ uint8_t apply_comparator(lpf_t * lpf)
         lpf->state_changed = 1;
         lpf->last_change_time = now;
 
-        if(lpf->_is_debug_print_set)
+        if(lpf->_log_fn != NULL)
         {
             char p[64] = {0};
-            snprintf(p, sizeof(p), "%s state=%d", lpf->_name, (int)lpf->is_detected);
-            LPF_DEBUG_PRINT(p);
+            snprintf(p, sizeof(p), "%s state=%d\r\n", lpf->_name, (int)lpf->is_detected);
+            lpf_emit_debug_print(lpf, p);
         }
     }
     else
         lpf->state_changed = 0;
-
 
     return lpf->is_detected;
 }
@@ -85,8 +102,8 @@ uint8_t apply_comparator(lpf_t * lpf)
 void debug_lpf(lpf_t * lpf)
 {
     char p[128] = {0};
-    snprintf(p, sizeof(p), ">%s: %ld\r\n>%s filtered: %ld", lpf->_name, (long)lpf->raw_val, lpf->_name, (long)lpf->filtered_val);
-    LPF_DEBUG_PRINT(p);
+    snprintf(p, sizeof(p), ">%s: %ld\r\n>%s filtered: %ld\r\n", lpf->_name, (long)lpf->raw_val, lpf->_name, (long)lpf->filtered_val);
+    lpf_emit_debug_print(lpf, p);
 }
 
 //-------------------------------------------------------------

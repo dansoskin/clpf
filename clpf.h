@@ -4,9 +4,12 @@
 
 #ifdef ARDUINO
     #include <Arduino.h>
+#else
+	#include "main.h"
 #endif
 
 #include <stdint.h>
+#include <stddef.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -30,11 +33,12 @@ extern "C"{
 #ifdef ARDUINO
 	void lpf_platform_debug_print(const char * message);
 	#define LPF_GET_TIME() millis()
-	#define LPF_DEBUG_PRINT(message) lpf_platform_debug_print(message)
 #else
-	#define LPF_GET_TIME() ((uint32_t)0)
-	#define LPF_DEBUG_PRINT(message) do { (void)(message); } while (0)
+	#define LPF_GET_TIME() HAL_GetTick()
 #endif
+
+
+typedef void (*lpf_log_fn_t)(const char * message);
 
 
 typedef struct
@@ -53,14 +57,15 @@ typedef struct
 	uint8_t is_detected, prev_detection, state_changed;
 	uint32_t last_inrange_time, last_change_time;
 
-	uint8_t _is_comparator_set, _is_debug_print_set;
+	uint8_t _is_comparator_set;
+	lpf_log_fn_t _log_fn;
 
 } lpf_t;
 
 
 void setup_lpf(lpf_t * lpf, uint8_t shift_amount);
 void setup_comparator(lpf_t * lpf, int32_t threshold, uint8_t should_inverse, uint32_t above_th_time);
-void setup_comparator_prints(lpf_t * lpf, const char* name);
+void setup_comparator_prints(lpf_t * lpf, const char* name, lpf_log_fn_t log_fn);
 
 
 int32_t apply_filter(lpf_t * lpf, int32_t new_sample);
