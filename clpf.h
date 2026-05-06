@@ -31,7 +31,6 @@ extern "C"{
 
 
 #ifdef ARDUINO
-	void lpf_platform_debug_print(const char * message);
 	#define LPF_GET_TIME() millis()
 #else
 	#define LPF_GET_TIME() HAL_GetTick()

@@ -3,16 +3,7 @@
 static void lpf_emit_debug_print(lpf_t * lpf, const char * message)
 {
     lpf->_log_fn(message);
-
-    // if ((lpf != NULL) && (lpf->_log_fn != NULL))
-    // {
-    //     lpf->_log_fn(message);
-    //     return;
-    // }
-
-    // LPF_FALLBACK_LOG(message);
 }
-
 
 
 void setup_lpf(lpf_t * lpf, uint8_t shift_amount)
