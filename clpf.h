@@ -12,6 +12,7 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <string.h>
+#include <assert.h>
 
 #ifdef __cplusplus
 extern "C"{
@@ -54,9 +55,11 @@ typedef struct
     int32_t filtered_val;
 
 	uint8_t is_detected, prev_detection, state_changed;
+	uint8_t rising_edge, falling_edge;
 	uint32_t last_inrange_time, last_change_time;
 
 	uint8_t _is_comparator_set;
+	uint8_t _initialized;
 	lpf_log_fn_t _log_fn;
 
 } lpf_t;
