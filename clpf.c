@@ -36,6 +36,21 @@ void setup_comparator_prints(lpf_t * lpf, const char* name, lpf_log_fn_t log_fn)
     lpf->_log_fn = log_fn;
 }
 
+void reset_comparator(lpf_t * lpf)
+{
+    if (lpf == NULL)
+        return;
+
+    lpf->is_detected = 0;
+    lpf->prev_detection = 0;
+    lpf->rising_edge = 0;
+    lpf->falling_edge = 0;
+    lpf->state_changed = 0;
+    lpf->last_inrange_time = LPF_GET_TIME();
+    lpf->last_change_time = lpf->last_inrange_time;
+    lpf->_initialized = 1;
+}
+
 int32_t apply_filter(lpf_t * lpf, int32_t new_sample)
 {
     lpf->raw_val = new_sample;

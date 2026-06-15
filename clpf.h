@@ -69,6 +69,11 @@ void setup_lpf(lpf_t * lpf, uint8_t shift_amount);
 void setup_comparator(lpf_t * lpf, int32_t threshold, uint8_t should_inverse, uint32_t above_th_time);
 void setup_comparator_prints(lpf_t * lpf, const char* name, lpf_log_fn_t log_fn);
 
+/* Clears the comparator detection state and restarts its dwell timer.
+   Use when a new activity begins so a stale "out of range" window does not
+   immediately trigger detection (e.g. starting a move after being idle). */
+void reset_comparator(lpf_t * lpf);
+
 
 int32_t apply_filter(lpf_t * lpf, int32_t new_sample);
 uint8_t apply_comparator(lpf_t * lpf);
